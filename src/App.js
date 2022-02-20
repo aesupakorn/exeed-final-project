@@ -11,11 +11,12 @@ import { useReducer } from 'react';
 import Error from './pages/Error';
 function reducer(state,action){
 	if(action.type === 'login'){
-		return true
+		return action.payload
 	}
 	if(action.type === 'logout'){
 		return false
 	}
+
 	return state
 }
 
@@ -26,19 +27,19 @@ const AuthContext = React.createContext();
 function App() {
 	const [authState , authDispatch] = useReducer(reducer , false)
 	const [loading ,setLoading] = useState(false)
-
 	return (
 
 		<AuthContext.Provider value={{authState,authDispatch}}>
 			{loading && <Loading/> }
 
 			<Router>
-				<Navbar setLoading={setLoading}/>
+				<Navbar setLoading={setLoading} token={authState}/>
 
 				<div className='main-container'>
 				<Routes>
 					<Route path='/' element={<Homepage />} />
-					{authState && <Route path='/event' element={<EventFormpage/>}/>}
+
+					{authState && <Route path='/event' element={<EventFormpage setLoading={setLoading} token={authState}/>}/>}
 					<Route path='*' element={<Navigate replace to='/'/>}/>
 				</Routes>
 				</div>

@@ -1,11 +1,14 @@
 import React from 'react';
+import History from '../components/History';
+import RoomSim from '../components/RoomSim';
 
 import './Homepage.css'
 const Homepage = () => {
 	return (
-		<div>
+		<div style={{display:"flex"}}>
 
-			<h1>This is fking homepage</h1>
+			<RoomSim/>
+			<History/>
 		</div>
 	);
 };

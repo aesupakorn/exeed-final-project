@@ -1,7 +1,10 @@
-import { keyboard } from '@testing-library/user-event/dist/keyboard'
+
+import { Axios } from 'axios'
 import React, { useState } from 'react'
+import { useEffect } from 'react'
 import './EventFormpage.css'
-const EventFormpage = () => {
+
+const EventFormpage = ({token,setLoading}) => {
 
   const [eventForm , setEventForm] = useState(
     {
@@ -19,20 +22,76 @@ const EventFormpage = () => {
           return {...prev , [name]:value}
         })
     }
-  return (
-    <div className='event-form-container'>
-      <h2 className='event-form-title'>Event Form</h2>
-      <form className='event-form'>
-        <div className='test'><label>Title: </label><input onChange={onEventFormChange} value={eventForm.title} name="title" placeholder='title'/></div>
-        <div className='test'><label>Date: </label><input  onChange={onEventFormChange} value={eventForm.date} name="date" placeholder='date'/></div>
-        <div className='test'><label>Start Time: </label><input onChange={onEventFormChange} value={eventForm.start} name="start" placeholder='start'/></div>
-        <div className='test'><label>End Time: </label><input onChange={onEventFormChange} value={eventForm.end} name="end" placeholder='end'/></div>
-        <div className='test'><label>Max Visitors: </label><input onChange={onEventFormChange} value={eventForm.max} name="max" placeholder='max'/></div>
-        <div className='test'><label>Min Visitors: </label><input onChange={onEventFormChange} value={eventForm.min} name="min" placeholder='min'/></div>
-        <button type='submit'>Submit</button>
-      </form>
+    async function onSubmitEvent(event){
+      event.preventDefault()
+      fetchEventData('https://ecourse.cpe.ku.ac.th/exceed04/api/event_add')
+    }
 
-    </div>
+
+    async function fetchEventData(url){
+      setLoading(true)
+      try{
+        const response = await fetch(url,{
+
+          method: "POST",
+          body: JSON.stringify({
+            title : eventForm.title,
+            date : eventForm.date,
+            start : eventForm.start,
+            end : eventForm.end,
+            people_to_close : Number(eventForm.max) ,
+            people_to_reopen : Number(eventForm.min)
+          }),
+          headers: {Authorization: token,
+                     'Content-Type': 'application/json'}
+
+        })
+        const json = await response.json()
+        console.log(json)
+      }
+      catch(error){
+        console.log(error.message)
+      }
+
+      setLoading(false)
+    }
+
+  return (
+
+    <form className='event-form-container' onSubmit={onSubmitEvent}>
+      <h2>Event Form</h2>
+      <div className="input-container ic1">
+        <input onChange={onEventFormChange} value={eventForm.title} name="title" className="input" type="text" placeholder=" " />
+        <div className="cut"></div>
+        <label name="title" className="placeholder">title</label>
+      </div>
+      <div className="input-container ic2">
+        <input onChange={onEventFormChange} value={eventForm.date} name="date" className="input" type="date" placeholder=" " />
+        <div className="cut cut-short"></div>
+        <label name="date" className="placeholder">date</label>
+      </div>
+      <div className="input-container ic2">
+        <input onChange={onEventFormChange} value={eventForm.start} name="start"  className="input" type="time" placeholder=" " />
+        <div className="cut"></div>
+        <label name="start" className="placeholder">start</label>
+      </div>
+      <div className="input-container ic2">
+        <input onChange={onEventFormChange} value={eventForm.end} name="end" className="input" type="time" placeholder=" " />
+        <div className="cut cut-short"></div>
+        <label name="end" className="placeholder">end</label>
+      </div>
+      <div className="input-container ic2">
+        <input onChange={onEventFormChange} value={eventForm.max} name="max" className="input" type="text" placeholder=" " />
+        <div className="cut cut-short"></div>
+        <label name="max" className="placeholder">max</label>
+      </div>
+      <div className="input-container ic2">
+        <input onChange={onEventFormChange} value={eventForm.min} name="min" className="input" type="text" placeholder=" " />
+        <div className="cut cut-short"></div>
+        <label name="min" className="placeholder">min</label>
+      </div>
+      <button type="submit" className="submit">submit</button>
+    </form>
   )
 }
 

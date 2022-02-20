@@ -83,20 +83,22 @@ hr{
 .login-container{
     display: flex;
     flex-direction: column;
-    padding: 6rem 1rem;
-    justify-content: center;
-    height: 25vh;
+    padding: 1rem 1rem;
+    justify-content: start;
+    align-items: flex-start;
+    height: 30vh;
+    gap: 2px;
 }
-label{
-    margin: 10px 0px 5px 0px;
-    font-size: small;
+label[name="username"],label[name="password"]{
+    margin: 5px 0px -2px 0px;
+    font-size: 12px;
     color: rgb(184, 184, 184);
     font-weight: 400;
 
 }
 
 button[type="submit"]{
-    margin-top: 1rem;
+    margin-top:2rem;
     margin-left: auto;
     margin-right: auto;
     width: 50%;
@@ -115,33 +117,80 @@ button[type="submit"]:hover{
     background-color: rgb(132, 0, 255);
     color: white;
 
+
 }
 .link{
     cursor: pointer;
 }
-.login-container > input:focus{
+input[name="username"]:focus,
+input[name="password"]:focus{
     outline: none;
     border-bottom: 2px solid rgb(193, 118, 243);
     transition: all 0.5s ease-in-out;
 }
-.login-container > input {
+ input[name="username"],input[name="password"] {
+    height: max-content;
     border: none;
-    border-bottom: 2px solid rgb(240, 239, 239);
-    margin-bottom: 10px;
-}
-.login-container > input:hover::placeholder {
+    width: 100%;
+    border-bottom: 2px solid rgb(240, 239, 239);}
+
+ input[name="username"]:active,input[name="password"]:active{
+    background-color: transparent;
+ }
+
+
+input[name="username"]:hover::placeholder,
+input[name="password"]:hover::placeholder {
     color: transparent;
     transition: all 0.2s ease-in-out;
 
 }
-
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+ }
 
 ::placeholder{
     color: rgb(120, 115, 124);
-
+    font-family: Mukta;
     font-size: 15px;
 }
 ::placeholder:hover{
-    font: 30pxs;
+    font: 30px;
 
+}
+.input-container-login{
+    position: relative;
+}
+.show-password{
+    position: absolute;
+    cursor: pointer;
+    color: rgb(120, 115, 124);
+    width: fit-content;
+    bottom: -3px;
+
+    right: 0;
+
+}
+
+.notification{
+    color: red;
+    position: absolute;
+    bottom: 31%;
+    font-size: 11px;
+}
+
+.schedule-list-box{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 4px solid rgb(175, 147, 200);
+    gap: 1px;
+    width: 90%;
+    margin:0px 0px 5px 5px;
+}
+.schedule-delete{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
 }

@@ -7,93 +7,91 @@ import { useContext } from 'react'
 import SchedulePop from './SchedulePop';
 import AdminPop from './AdminPop';
 import LoginPop from './LoginPop';
+import { AiOutlineSchedule } from "react-icons/ai"
+import { RiAdminLine } from "react-icons/ri"
 
 
 
-let eventTrack = [
-	{ eventName: 'Exceed', startTime: Date() },
-	{ eventName: 'Exceed', startTime: Date() },
-	{ eventName: 'Exceed', startTime: Date() },
-	{ eventName: 'Exceed', startTime: Date() },
-	{ eventName: 'Exceed', startTime: Date() },
-	{ eventName: 'Exceed', startTime: Date() },
-	{ eventName: 'Exceed', startTime: Date() },
-];
-
-let adminAccount = {
-	id: 'superman',
-	password: '12345',
-};
 
 
 
-const Navbar = ({setLoading}) => {
-	const {authSate , authDispatch} = useContext(AuthContext)
+const Navbar = ({setLoading,token}) => {
+
 	const [showSchedule, setShowSchedule] = useState(false);
 	const [showLoginForm, setShowLoginForm] = useState(false);
-	const [scheduleList, setScheduleList] = useState(eventTrack);
-	const [loginForm, setLoginForm] = useState({ id: '', password: '' });
 	const [admin, setAdmin] = useState(false);
+	const [scheduleList , setScheduleList] = useState({})
+	const [onTitle,setOnTitle] = useState({title:"NaN",start:"NaN",end:"NaN"})
+
+	async function fetchGetSchedule(){
+		const res = await fetch('https://ecourse.cpe.ku.ac.th/exceed04/api/event')
+		const json = await res.json()
+		setScheduleList(json)
+	}
+	async function fetchPresentEvent(){
+		const res = await fetch('https://ecourse.cpe.ku.ac.th/exceed04/api/event_now')
+		const json = await res.json()
+
+
+		setOnTitle({
+			title:json.title,
+			start:json.start,
+			end : json.end
+		})
+	}
+
+	useEffect(()=>{
+		const schedule = setInterval(() => {
+			fetchPresentEvent()
+			fetchGetSchedule()
+		}, 1000);
+		return (()=>{
+			clearInterval(schedule)
+		})
+	},[])
 
 	let navigate = useNavigate()
 
 
-	function onFormChange(event) {
-		const { name, value } = event.target;
-		return setLoginForm((prev) => {
-			return { ...prev, [name]: value };
-		});
-	}
-	function onLoginForm(event) {
-		event.preventDefault();
 
-		if (
-
-			loginForm.id === adminAccount.id &&
-			loginForm.password === adminAccount.password) {
-				setLoading(true)
-				setTimeout(() => {
-					setAdmin(true);
-					authDispatch({ type : 'login' ,payload : admin})
-					setLoading(false)
-				}, 800);
-
-		}
-	}
 
 	return (
-
-
 			<div>
 				<nav>
 					<div className='nav-container'>
-						<p
+						<p style={{display:"flex",alignItems:"flex-end",gap:"4px"}}
 							className='link'
 							onClick={() => {
 								setShowSchedule(!showSchedule);
 							}}
 						>
-							schedule
+							<AiOutlineSchedule size={30+'px'}/>
+							Schedule
 						</p>
-						<h1  style={{cursor: 'pointer'}} onClick={()=>{navigate('/')}}>Logo</h1>
-						<p
+						<div style={{display:"flex",flexDirection:"column",alignItems:"center"}}>
+							<h1  style={{cursor: 'pointer'}} onClick={()=>{navigate('/')}}>{onTitle.title}</h1>
+							<p>{onTitle.start+" - "+onTitle.end}</p>
+						</div>
+
+						<p style={{display:"flex",alignItems:"center",gap:"4px"}}
 							className='link'
 							onClick={() => {
 								setShowLoginForm(!showLoginForm);
 							}}
 						>
-							{admin ? 'Admin' : 'Login'}
+							<RiAdminLine  size={25+'px'} />
+							{admin ? 'Admin' : 'Login as Admin'}
 						</p>
 
 						{showSchedule && (
-							<SchedulePop scheduleList={scheduleList}/>
+							<SchedulePop scheduleList={scheduleList} token={token} admin={admin}/>
 						)}
 
 						{showLoginForm &&
 							(admin ? (
 								<AdminPop setAdmin={setAdmin}/>
 							) : (
-								<LoginPop onLoginForm={onLoginForm} loginForm={loginForm} onFormChange={onFormChange}/>
+								<LoginPop setLoading={setLoading} setAdmin={setAdmin}/>
 							))}
 					</div>
 				</nav>
